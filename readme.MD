@@ -7,6 +7,6 @@
 
 ## Установка
 
-1) `composer require `
+1) `composer require proklung/bitrixsymfonyrouterbundle`
 
 2) Подключение бандла в `standalone_bundles.php`
