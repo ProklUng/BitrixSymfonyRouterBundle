@@ -1,0 +1,165 @@
+parameters:
+  routing:
+    enabled: true
+
+services:
+  # конфигурация по умолчанию в *этом* файле
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  #####################
+  # Роутер.
+  #####################
+
+  Symfony\Component\HttpKernel\Controller\ControllerResolver:
+    public: false
+    class: Symfony\Component\HttpKernel\Controller\ControllerResolver
+
+  # Коллекция загруженных роутов.
+  routes.collection:
+    class: Symfony\Component\Routing\RouteCollection
+    factory: ['@router', 'getRouteCollection']
+
+  router.default: '@router'
+
+  # Стандартный контроллер ошибок.
+  standart.error.controller:
+    class: Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorController
+    arguments: ['@serialize']
+
+  # Json контроллер ошибок.
+  routing.json.error.controller:
+    class: Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorJsonController
+    arguments: ['@serialize']
+
+  Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorJsonController: '@routing.json.error.controller'
+  Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorControllerInterface: '@routing.json.error.controller'
+
+  # Инициализатор роутов.
+  init.router:
+    class: Prokl\BitrixSymfonyRouterBundle\Services\Router\InitRouter
+    arguments:
+      - '@routes.collection'
+      - '@routing.json.error.controller'
+      - '@event_dispatcher'
+      - '@controller_resolver'
+      - '@argument_resolver'
+      - '@request_stack'
+
+    # Подвязка на битриксовое событие.
+    tags:
+      - { name: bitrix.events.init, module: main, event: OnProlog, method: handle, sort: 1 }
+
+  # Проверка роутов.
+  route.checker:
+    class: Prokl\BitrixSymfonyRouterBundle\Services\Utils\RouteChecker
+    arguments: ['@routes.collection']
+
+  # Запрос.
+  router.request:
+    class: Prokl\BitrixSymfonyRouterBundle\Services\Utils\AppRequest
+    tags: ['service.bootstrap']
+
+  Prokl\BitrixSymfonyRouterBundle\Services\Utils\AppRequest: '@router.request'
+
+  # Request приложения.
+  global.request:
+    class: Symfony\Component\HttpFoundation\Request
+    factory: ['@router.request', 'getRequest']
+
+  Symfony\Component\Routing\RequestContext: ~
+
+  request.context:
+    class: Symfony\Component\Routing\RequestContext
+    factory: ['@Symfony\Component\Routing\RequestContext', 'fromRequest']
+    arguments: ['@global.request']
+
+  file_locator:
+    class: Symfony\Component\Config\FileLocator
+
+  routing.resolver:
+    class: Symfony\Component\Config\Loader\LoaderResolver
+
+  routing.loader.yml:
+    class: Symfony\Component\Routing\Loader\YamlFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.php:
+    class: Symfony\Component\Routing\Loader\PhpFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.xml:
+    class: Symfony\Component\Routing\Loader\XmlFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.glob:
+    class: Symfony\Component\Routing\Loader\GlobFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.directory:
+    class: Symfony\Component\Routing\Loader\DirectoryLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader:
+    class: Symfony\Bundle\FrameworkBundle\Routing\DelegatingLoader
+    arguments:
+      - '@routing.resolver'
+      - []
+      - []
+
+  router:
+    class: Symfony\Component\Routing\Router
+    arguments:
+      - '@routing.loader'
+      - '%kernel.project_dir%/local/configs/routes.yaml'
+      -   cache_dir: '%kernel.cache_dir%'
+          debug: '%kernel.debug%'
+      - '@request.context'
+
+  Symfony\Component\Routing\RouterInterface: '@router'
+  Symfony\Component\Routing\RequestContextAwareInterface: '@router'
+  Symfony\Component\Routing\Generator\UrlGeneratorInterface: '@router'
+  Symfony\Component\Routing\Matcher\UrlMatcherInterface: '@router'
+
+  # Диспетчер запуска контроллеров.
+  dispatcher.controller:
+    class: Prokl\BitrixSymfonyRouterBundle\Services\Utils\DispatchController
+    arguments:
+      - '@event_dispatcher'
+      - '@controller_resolver'
+      - '@argument_resolver'
+      - '@routing.json.error.controller'
+
+  Prokl\BitrixSymfonyRouterBundle\Services\Utils\DispatchController: '@dispatcher.controller'
+
+  # Диспетчер запуска роутов.
+  dispatcher.route:
+    class: Prokl\BitrixSymfonyRouterBundle\Services\Utils\DispatchRoute
+    arguments:
+      - '@event_dispatcher'
+      - '@routing.json.error.controller'
+      - '@Symfony\Component\HttpKernel\Controller\ControllerResolver'
+      - '@argument_resolver'
+      - '@serializer'
+
+  Prokl\BitrixSymfonyRouterBundle\Services\Utils\DispatchRoute: '@dispatcher.route'
+
+  # Игнорируемые при автовайринге классы (учитывя наследование).
+  ignored.autowiring.controller.arguments:
+    class: Prokl\BitrixSymfonyRouterBundle\Services\Utils\IgnoredAutowiringControllerParamsBag
+#    calls:
+#      - add: [['Local\Bundles\ApiDtoConvertorBundle\DependencyInjection\BaseDTOInterface']]
+
+  Prokl\BitrixSymfonyRouterBundle\Services\Utils\IgnoredAutowiringControllerParamsBag: '@ignored.autowiring.controller.arguments'
