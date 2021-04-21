@@ -1,7 +1,3 @@
-parameters:
-  routing:
-    enabled: true
-
 services:
   # конфигурация по умолчанию в *этом* файле
   _defaults:
@@ -27,12 +23,12 @@ services:
   # Стандартный контроллер ошибок.
   standart.error.controller:
     class: Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorController
-    arguments: ['@serialize']
+    arguments: ['@serializer']
 
   # Json контроллер ошибок.
   routing.json.error.controller:
     class: Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorJsonController
-    arguments: ['@serialize']
+    arguments: ['@serializer']
 
   Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorJsonController: '@routing.json.error.controller'
   Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorControllerInterface: '@routing.json.error.controller'
