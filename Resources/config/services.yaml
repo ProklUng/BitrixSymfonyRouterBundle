@@ -152,10 +152,3 @@ services:
 
   Prokl\BitrixSymfonyRouterBundle\Services\Utils\DispatchRoute: '@dispatcher.route'
 
-  # Игнорируемые при автовайринге классы (учитывя наследование).
-  ignored.autowiring.controller.arguments:
-    class: Prokl\BitrixSymfonyRouterBundle\Services\Utils\IgnoredAutowiringControllerParamsBag
-#    calls:
-#      - add: [['Local\Bundles\ApiDtoConvertorBundle\DependencyInjection\BaseDTOInterface']]
-
-  Prokl\BitrixSymfonyRouterBundle\Services\Utils\IgnoredAutowiringControllerParamsBag: '@ignored.autowiring.controller.arguments'
