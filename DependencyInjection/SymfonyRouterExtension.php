@@ -3,6 +3,9 @@
 namespace Prokl\BitrixSymfonyRouterBundle\DependencyInjection;
 
 use Exception;
+use Prokl\BitrixSymfonyRouterBundle\Services\Facades\RunController;
+use Prokl\BitrixSymfonyRouterBundle\Services\Facades\RunRoute;
+use Prokl\FacadeBundle\Services\AbstractFacade;
 use Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -35,6 +38,12 @@ class SymfonyRouterExtension extends Extension
         );
 
         $loader->load('services.yaml');
+
+        // Если не задействован FacadeBundle, то удалить фасады.
+        if (!class_exists(AbstractFacade::class)) {
+            $container->removeDefinition(RunRoute::class);
+            $container->removeDefinition(RunController::class);
+        }
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);

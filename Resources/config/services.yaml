@@ -140,6 +140,9 @@ services:
 
   Prokl\BitrixSymfonyRouterBundle\Services\Utils\DispatchController: '@dispatcher.controller'
 
+  # Фасад. Сработает только, если активирован бандл Facade-Bundle.
+  Prokl\BitrixSymfonyRouterBundle\Services\Facades\RunController: ~
+
   # Диспетчер запуска роутов.
   dispatcher.route:
     class: Prokl\BitrixSymfonyRouterBundle\Services\Utils\DispatchRoute
@@ -151,4 +154,7 @@ services:
       - '@serializer'
 
   Prokl\BitrixSymfonyRouterBundle\Services\Utils\DispatchRoute: '@dispatcher.route'
+
+  # Фасад. Сработает только, если активирован бандл Facade-Bundle.
+  Prokl\BitrixSymfonyRouterBundle\Services\Facades\RunRoute: ~
 
