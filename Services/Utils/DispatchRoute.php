@@ -319,8 +319,6 @@ class DispatchRoute
             );
         }
 
-        // Удалить служебные роуты.
-        $this->routes->remove(['index', 'remove_trailing_slash', 'not-found']);
         $matcher = new UrlMatcher($this->routes, $this->requestContext);
 
         try {
