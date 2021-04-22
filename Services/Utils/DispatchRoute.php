@@ -6,6 +6,7 @@ use Exception;
 use InvalidArgumentException;
 use Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorControllerInterface;
 use Prokl\BitrixSymfonyRouterBundle\Services\Listeners\StringResponseListener;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
@@ -306,11 +307,18 @@ class DispatchRoute
      * @param string $uri URL.
      *
      * @return array
+     * @throws RuntimeException Когда перед пуском не задали коллекцию роутов.
      *
      * @since 21.10.2020 Убрал лишний catch.
      */
     private function getRouteInfo(string $uri) : array
     {
+        if ($this->routes === null) {
+            throw new RuntimeException(
+                'Route collection not initialized. Use setRoutes method before.'
+            );
+        }
+
         // Удалить служебные роуты.
         $this->routes->remove(['index', 'remove_trailing_slash', 'not-found']);
         $matcher = new UrlMatcher($this->routes, $this->requestContext);
