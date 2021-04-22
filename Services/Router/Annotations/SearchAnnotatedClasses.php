@@ -73,7 +73,7 @@ class SearchAnnotatedClasses
      *
      * @internal Код с stackoverflow.
      */
-    protected function listClassesByPath(string $path)
+    protected function listClassesByPath(string $path): array
     {
         $fqcns = [];
 
