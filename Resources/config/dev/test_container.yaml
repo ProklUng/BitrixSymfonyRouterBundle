@@ -1,0 +1,187 @@
+##############
+# Сериалайзер
+##############
+
+services:
+  # конфигурация по умолчанию в *этом* файле
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  Symfony\Component\HttpKernel\Controller\ControllerResolver: ~
+
+  property_info:
+    class: Symfony\Component\PropertyInfo\PropertyInfoExtractor
+    arguments:
+      - ['@property_info.reflection_extractor']
+      - ['@property_info.reflection_extractor', '@property_info.php_doc_extractor']
+      - ['@property_info.php_doc_extractor']
+      - ['@property_info.reflection_extractor']
+      - ['@property_info.reflection_extractor']
+
+  property_info.reflection_extractor:
+    class: Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor
+    tags:
+      - { name: property_info.list_extractor, priority: -1000}
+      - { name: property_info.type_extractor, priority: -1002}
+      - { name: property_info.access_extractor, priority: -1000}
+      - { name: property_info.initializable_extractor, priority: -1000}
+
+  property_info.php_doc_extractor:
+    class: Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor
+    tags:
+      - { name: property_info.description_extractor, priority: -1000}
+      - { name: property_info.type_extractor, priority: -1002}
+
+  Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor: '@property_info.php_doc_extractor'
+
+  Symfony\Component\PropertyInfo\PropertyReadInfoExtractorInterface: '@property_info.reflection_extractor'
+  Symfony\Component\PropertyInfo\PropertyWriteInfoExtractorInterface: '@property_info.reflection_extractor'
+
+  Symfony\Component\PropertyInfo\PropertyInfoExtractor: '@property_info'
+  Symfony\Component\PropertyInfo\PropertyAccessExtractorInterface: '@property_info'
+  Symfony\Component\PropertyInfo\PropertyDescriptionExtractorInterface: '@property_info'
+  Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface: '@property_info'
+  Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface: '@property_info'
+  Symfony\Component\PropertyInfo\PropertyListExtractorInterface: '@property_info'
+  Symfony\Component\PropertyInfo\PropertyInitializableExtractorInterface: '@property_info'
+
+  # Сериализатор.
+  serializer:
+    class: Symfony\Component\Serializer\Serializer
+    arguments:
+        - ['@serializer.normalizer.object']
+        - ['@json.encoder']
+
+  # json.encoder
+  json.encoder:
+    class: Symfony\Component\Serializer\Encoder\JsonEncoder
+    tags: [serializer.encoder]
+
+  Symfony\Component\Serializer\Encoder\JsonEncoder: '@json.encoder'
+
+  json.encoder.unescaped:
+    class: Symfony\Component\Serializer\Encoder\JsonEncode
+    arguments:
+      - [!php/const JSON_UNESCAPED_UNICODE]
+    tags: [serializer.encoder]
+
+  serializer.encoder.xml:
+    class: Symfony\Component\Serializer\Encoder\XmlEncoder
+
+  serializer.encoder.yaml:
+    class: Symfony\Component\Serializer\Encoder\YamlEncoder
+
+  serializer.encoder.csv:
+    class: Symfony\Component\Serializer\Encoder\CsvEncoder
+
+  # Нормалайзер объектов.
+  object.normalizer:
+    class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
+    tags: [serializer.normalizer]
+
+  Symfony\Component\Serializer\Normalizer\ObjectNormalizer: '@serializer.normalizer.object'
+
+  serializer.normalizer.object:
+    class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
+    arguments:
+      - "@serializer.mapping.class_metadata_factory"
+      - "@serializer.name_converter.metadata_aware"
+      - "@serializer.property_accessor"
+      - "@property_info"
+      - "@serializer.mapping.class_discriminator_resolver"
+      - ~
+      - []
+    tags:
+      # Run after all custom normalizers
+      - { name: serializer.normalizer", priority: -1000}
+
+  serializer.denormalizer.array:
+    class: Symfony\Component\Serializer\Normalizer\ArrayDenormalizer
+    tags:
+      - { name: serializer.normalizer", priority: -990}
+
+  serializer.normalizer.constraint_violation_list:
+    class: Symfony\Component\Serializer\Normalizer\ConstraintViolationListNormalizer
+    arguments:
+      - []
+      - '@serializer.name_converter.metadata_aware'
+    tags:
+      - { name: serializer.normalizer", priority: -915}
+
+  serializer.normalizer.datetimezone:
+    class: Symfony\Component\Serializer\Normalizer\DateTimeZoneNormalizer
+    tags:
+      - { name: serializer.normalizer", priority: -915}
+
+  serializer.normalizer.dateinterval:
+    class: Symfony\Component\Serializer\Normalizer\DateIntervalNormalizer
+    tags:
+      - { name: serializer.normalizer", priority: -915}
+
+  serializer.normalizer.datetime:
+    class: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+    tags:
+      - { name: serializer.normalizer", priority: -910}
+
+  serializer.normalizer.json_serializable:
+    class: Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer
+    tags:
+      - { name: serializer.normalizer", priority: -900}
+
+  serializer.normalizer.normalizer.problem:
+    class: Symfony\Component\Serializer\Normalizer\ProblemNormalizer
+    tags:
+      - { name: serializer.normalizer", priority: -890}
+
+  serializer.normalizer.denormalizer.unwrapping:
+    class: Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer
+    tags:
+      - { name: serializer.normalizer", priority: 1000}
+
+  # Сериализатор aliases.
+  Symfony\Component\Serializer\Serializer: '@serializer'
+  Symfony\Component\Serializer\SerializerInterface: '@serializer'
+  Symfony\Component\Serializer\Normalizer\NormalizerInterface: '@serializer'
+  Symfony\Component\Serializer\Normalizer\DenormalizerInterface: '@serializer'
+  Symfony\Component\Serializer\Encoder\EncoderInterface: '@serializer'
+  Symfony\Component\Serializer\Encoder\DecoderInterface: '@serializer'
+
+  serializer.property_accessor: '@property_accessor'
+
+  property_accessor:
+    class: Symfony\Component\PropertyAccess\PropertyAccessor
+
+  serializer.mapping.class_metadata_factory:
+    class: Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory
+    arguments: ['@serializer.mapping.chain_loader']
+
+  Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface: '@serializer.mapping.class_metadata_factory'
+
+  Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader: ~
+  #  Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader: ~
+  #  Symfony\Component\Serializer\Mapping\Loader\XmlFileLoader: ~
+  #  Symfony\Component\Serializer\Mapping\Loader\FileLoader: ~
+
+  serializer.mapping.chain_loader:
+    class: Symfony\Component\Serializer\Mapping\Loader\LoaderChain
+    arguments:
+      - ['@Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader']
+
+  serializer.mapping.class_discriminator_resolver:
+    class: Symfony\Component\Serializer\Mapping\ClassDiscriminatorFromClassMetadata
+    arguments: ['@serializer.mapping.class_metadata_factory']
+
+  serializer.name_converter.camel_case_to_snake_case:
+    class: Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter
+
+  serializer.name_converter.metadata_aware:
+    class: Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter
+    arguments: ['@serializer.mapping.class_metadata_factory']
+
+  property_info.serializer_extractor:
+    class: Symfony\Component\PropertyInfo\Extractor\SerializerExtractor
+    arguments: ['@serializer.mapping.class_metadata_factory']
+    tags:
+      - { name: property_info.list_extractor, priority: -999 }
