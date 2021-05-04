@@ -72,49 +72,6 @@ services:
     factory: ['@Symfony\Component\Routing\RequestContext', 'fromRequest']
     arguments: ['@global.request']
 
-  file_locator:
-    class: Symfony\Component\Config\FileLocator
-
-  routing.resolver:
-    class: Symfony\Component\Config\Loader\LoaderResolver
-
-  routing.loader.yml:
-    class: Symfony\Component\Routing\Loader\YamlFileLoader
-    arguments: ['@file_locator']
-    tags:
-      - { name: routing.loader }
-
-  routing.loader.php:
-    class: Symfony\Component\Routing\Loader\PhpFileLoader
-    arguments: ['@file_locator']
-    tags:
-      - { name: routing.loader }
-
-  routing.loader.xml:
-    class: Symfony\Component\Routing\Loader\XmlFileLoader
-    arguments: ['@file_locator']
-    tags:
-      - { name: routing.loader }
-
-  routing.loader.glob:
-    class: Symfony\Component\Routing\Loader\GlobFileLoader
-    arguments: ['@file_locator']
-    tags:
-      - { name: routing.loader }
-
-  routing.loader.directory:
-    class: Symfony\Component\Routing\Loader\DirectoryLoader
-    arguments: ['@file_locator']
-    tags:
-      - { name: routing.loader }
-
-  routing.loader:
-    class: Symfony\Bundle\FrameworkBundle\Routing\DelegatingLoader
-    arguments:
-      - '@routing.resolver'
-      - []
-      - []
-
   router:
     class: Symfony\Component\Routing\Router
     arguments:
@@ -157,4 +114,47 @@ services:
 
   # Фасад. Сработает только, если активирован бандл Facade-Bundle.
   Prokl\BitrixSymfonyRouterBundle\Services\Facades\RunRoute: ~
+
+  file_locator:
+    class: Symfony\Component\Config\FileLocator
+
+  routing.resolver:
+    class: Symfony\Component\Config\Loader\LoaderResolver
+
+  routing.loader.yml:
+    class: Symfony\Component\Routing\Loader\YamlFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.php:
+    class: Symfony\Component\Routing\Loader\PhpFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.xml:
+    class: Symfony\Component\Routing\Loader\XmlFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.glob:
+    class: Symfony\Component\Routing\Loader\GlobFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.directory:
+    class: Symfony\Component\Routing\Loader\DirectoryLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader:
+    class: Symfony\Bundle\FrameworkBundle\Routing\DelegatingLoader
+    arguments:
+      - '@routing.resolver'
+      - []
+      - []
 

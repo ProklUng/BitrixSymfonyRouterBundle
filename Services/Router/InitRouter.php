@@ -148,17 +148,13 @@ class InitRouter
             $this->argumentResolver
         );
 
+        $response = $framework->handle($this->request);
+        // Инициирует событие kernel.terminate.
         try {
-            $response = $framework->handle($this->request);
-            // Инициирует событие kernel.terminate.
-            try {
-                $framework->terminate($this->request, $response);
-            } catch (Exception $e) {
-                CHTTP::SetStatus($this->translateHttpResponseCode($e->getCode()));
-                exit($e->getMessage());
-            }
+            $framework->terminate($this->request, $response);
         } catch (Exception $e) {
-            return;
+            CHTTP::SetStatus($this->translateHttpResponseCode($e->getCode()));
+            exit($e->getMessage());
         }
 
         // Handle if no route match found

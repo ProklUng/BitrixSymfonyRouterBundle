@@ -48,6 +48,10 @@ class SymfonyRouterExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        if (!$container->hasParameter('controller.annotations.path')) {
+            $container->setParameter('controller.annotations.path', []);
+        }
+
         $this->registerRouterConfiguration(
             $config,
             $container
