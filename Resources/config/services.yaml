@@ -54,7 +54,7 @@ services:
     arguments: ['@routes.collection']
 
   Prokl\BitrixSymfonyRouterBundle\Services\Utils\RouteChecker: '@route.checker'
-  route.utils: '@route.checker'
+  routing.utils: '@route.checker'
 
   # Запрос.
   router.request:
