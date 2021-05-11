@@ -10,3 +10,15 @@
 1) `composer require proklung/bitrixsymfonyrouterbundle`
 
 2) Подключение бандла в `standalone_bundles.php`
+
+## Автономное использование
+
+Роутер подлежит автономному использованию, вне рамок бандлов:
+
+```php
+    use Prokl\BitrixSymfonyRouterBundle\Services\Router\InitRouter;
+    
+    $router = new InitRouter(
+
+    );
+```
