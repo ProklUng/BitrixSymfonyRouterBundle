@@ -50,7 +50,7 @@ class SearchAnnotatedClasses
      */
     public function collect() : array
     {
-        if ($this->paths === null) {
+        if (count($this->paths) === 0) {
             return [];
         }
 

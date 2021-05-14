@@ -38,7 +38,7 @@ interface DispatchControllerInterface
      *
      * @param Request $request Request.
      *
-     * @return DispatchController
+     * @return DispatchControllerInterface
      */
     public function setRequest(Request $request): self;
 
@@ -47,7 +47,7 @@ interface DispatchControllerInterface
      *
      * @param array $query Query параметры.
      *
-     * @return $this
+     * @return DispatchControllerInterface
      *
      * @since 21.10.2020
      */
@@ -58,7 +58,7 @@ interface DispatchControllerInterface
      *
      * @param array $headers Заголовки.
      *
-     * @return $this
+     * @return DispatchControllerInterface
      *
      * @since 21.10.2020
      */
@@ -69,7 +69,7 @@ interface DispatchControllerInterface
      *
      * @param array $arParams Параметры (лягут в аттрибуты Request).
      *
-     * @return DispatchController
+     * @return DispatchControllerInterface
      */
     public function setParams(array $arParams): self;
 
@@ -78,7 +78,7 @@ interface DispatchControllerInterface
      *
      * @param mixed $listener
      *
-     * @return $this
+     * @return DispatchControllerInterface
      *
      * @since 07.09.2020
      */
@@ -87,9 +87,9 @@ interface DispatchControllerInterface
     /**
      * Получить Response.
      *
-     * @return Response
+     * @return Response | null
      *
      * @since 21.10.2020
      */
-    public function getResponse(): Response;
+    public function getResponse(): ?Response;
 }

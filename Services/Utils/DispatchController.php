@@ -34,7 +34,7 @@ class DispatchController implements DispatchControllerInterface
     private $request;
 
     /**
-     * @var Response $response Response.
+     * @var Response | null $response Response.
      */
     private $response;
 
@@ -197,7 +197,7 @@ class DispatchController implements DispatchControllerInterface
     /**
      * @inheritDoc
      */
-    public function getResponse(): Response
+    public function getResponse(): ?Response
     {
         return $this->response;
     }

@@ -8,6 +8,7 @@ use Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorControllerInterfac
 use Prokl\BitrixSymfonyRouterBundle\Services\Listeners\StringResponseListener;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\HttpKernel;
@@ -54,12 +55,12 @@ class DispatchRoute
     private $controllerResolver;
 
     /**
-     * @var RouteCollection
+     * @var RouteCollection | null $routes
      */
     private $routes;
 
     /**
-     * @var RequestContext
+     * @var RequestContext $requestContext
      */
     private $requestContext;
 
@@ -110,7 +111,7 @@ class DispatchRoute
             new ErrorListener(
                 [$errorController, 'exceptionAction']
             ),
-            new ResponseListener('UTF-8')
+            new ResponseListener('UTF-8'),
         ];
     }
 
@@ -155,7 +156,7 @@ class DispatchRoute
     /**
      * Исполнить роут.
      *
-     * @param string|array $url URL роута.
+     * @param string $url URL роута.
      *
      * @return false | Response
      *
@@ -293,7 +294,9 @@ class DispatchRoute
      */
     private function addSubscribers(array $subscribers = []) : void
     {
+        /** @var EventSubscriberInterface $subscriber */
         foreach ($subscribers as $subscriber) {
+            /** @psalm-suppress DocblockTypeContradiction */
             if (!is_object($subscriber)) {
                 continue;
             }

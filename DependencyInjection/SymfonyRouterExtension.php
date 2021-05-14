@@ -84,8 +84,8 @@ class SymfonyRouterExtension extends Extension
         $annotationsConfigEnabled = $container->getParameter('enable_annotations');
 
         if ($config['default_uri'] === null) {
-            $host = $container->getParameter('kernel.http.host');
-            $schema = $container->getParameter('kernel.schema');
+            $host = (string)$container->getParameter('kernel.http.host');
+            $schema = (string)$container->getParameter('kernel.schema');
             $config['default_uri'] = $schema . '://' . $host . '/';
         }
 
