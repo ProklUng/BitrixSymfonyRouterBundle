@@ -11,14 +11,11 @@
 
 2) Подключение бандла в `standalone_bundles.php`
 
-## Автономное использование
+## Всякое
 
-Роутер подлежит автономному использованию, вне рамок бандлов:
+### Файл с роутами
 
-```php
-    use Prokl\BitrixSymfonyRouterBundle\Services\Router\InitRouter;
-    
-    $router = new InitRouter(
+Передается через параметр `router_config_file` конфигурации бандла (`symfony_router.yaml` в конфигурации бандлов). 
+Файл может быть в любом поддерживаемом Symfony формате - Yaml, PHP, XML и т.д.
 
-    );
-```
+По умолчанию - `local/configs/routes.yaml`.

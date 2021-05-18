@@ -79,7 +79,7 @@ services:
     class: Symfony\Component\Routing\Router
     arguments:
       - '@routing.loader'
-      - '%kernel.project_dir%/local/configs/routes.yaml'
+      - '%kernel.project_dir%/%router.config.file%'
       -   cache_dir: '%kernel.cache_dir%'
           debug: '%kernel.debug%'
       - '@request.context'

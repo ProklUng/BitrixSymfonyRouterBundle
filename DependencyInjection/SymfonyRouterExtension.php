@@ -107,6 +107,7 @@ class SymfonyRouterExtension extends Extension
         $container->setParameter('router.request.context.scheme', $config['router_request_context_scheme']);
         $container->setParameter('router.request.context.base_url', $config['router_request_context_base_url']);
         $container->setParameter('router.cache.path', $config['router_cache_path']);
+        $container->setParameter('router.config.file', $config['router_config_file']);
         $container->setParameter('default_uri', $config['default_uri']);
 
         if ($config['utf8']) {
