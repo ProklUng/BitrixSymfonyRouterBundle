@@ -51,7 +51,7 @@ services:
   # Проверка роутов.
   route.checker:
     class: Prokl\BitrixSymfonyRouterBundle\Services\Utils\RouteChecker
-    arguments: ['@routes.collection']
+    arguments: ['@routes.collection', '@global.request', '@request.context']
 
   Prokl\BitrixSymfonyRouterBundle\Services\Utils\RouteChecker: '@route.checker'
   routing.utils: '@route.checker'
