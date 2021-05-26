@@ -28,6 +28,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('router_request_context_scheme')->defaultValue('http')->end()
                 ->scalarNode('router_request_context_base_url')->defaultValue('')->end()
                 ->scalarNode('router_cache_path')->defaultValue('%kernel.cache_dir%/routes')->end()
+                ->booleanNode('router_check_exists_controller')->defaultValue(false)->end()
                 ->arrayNode('controller_annotations_path')
                     ->useAttributeAsKey('name')
                     ->prototype('scalar')->end()

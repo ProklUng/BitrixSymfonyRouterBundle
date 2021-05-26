@@ -118,6 +118,17 @@ services:
   # Фасад. Сработает только, если активирован бандл Facade-Bundle.
   Prokl\BitrixSymfonyRouterBundle\Services\Facades\RunRoute: ~
 
+  # Проверка роутов на существование контроллеров.
+  router.checker.exists:
+    class: Prokl\BitrixSymfonyRouterBundle\Services\Utils\RouteCheckerExist
+    arguments: ['@routes.collection']
+
+  # Проверка роутов на существование контроллеров.
+  router.checker.exists.autoload:
+    class: Prokl\BitrixSymfonyRouterBundle\Services\Utils\RouteCheckerExist
+    factory: ['@router.checker.exists', 'check']
+    tags: ['service.bootstrap']
+
   file_locator:
     class: Symfony\Component\Config\FileLocator
 

@@ -83,6 +83,10 @@ class SymfonyRouterExtension extends Extension
     ): void {
         $annotationsConfigEnabled = $container->getParameter('enable_annotations');
 
+        if ($config['router_check_exists_controller'] === false) {
+            $container->removeDefinition('router.checker.exists.autoload');
+        }
+
         if ($config['default_uri'] === null) {
             $host = (string)$container->getParameter('kernel.http.host');
             $schema = (string)$container->getParameter('kernel.schema');
