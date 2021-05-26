@@ -37,12 +37,15 @@ class RouteCheckerExist
         $allRoutes = $this->routeCollection->all();
         foreach ($allRoutes as $nameRoute => $route) {
             $controller = $route->getDefault('_controller');
+
+            $method = '__invoke';
             if (is_string($controller)) {
                 if (strpos($controller, '::') !== false) {
                     $callback = explode('::', $controller, 2);
-                    $class = $callback[0];
+                    $class = (string)$callback[0];
+                    $method = (string)$callback[1];
                 } else {
-                    // _invoke_
+                    // __invoke
                     $class = $controller;
                 }
 
@@ -52,6 +55,17 @@ class RouteCheckerExist
                             'Class %s declaring as controller for route %s not exists.',
                             $class,
                             $nameRoute
+                        )
+                    );
+                }
+
+                if (!method_exists($class, $method)) {
+                    throw new LogicException(
+                        sprintf(
+                            'Class %s declaring as controller for route %s dont have method %s.',
+                            $class,
+                            $nameRoute,
+                            $method
                         )
                     );
                 }
