@@ -3,6 +3,7 @@
 namespace Prokl\BitrixSymfonyRouterBundle\DependencyInjection;
 
 use Exception;
+use Bitrix\Main\ModuleManager;
 use Prokl\BitrixSymfonyRouterBundle\Services\Facades\RunController;
 use Prokl\BitrixSymfonyRouterBundle\Services\Facades\RunRoute;
 use Prokl\FacadeBundle\Services\AbstractFacade;
@@ -38,6 +39,12 @@ class SymfonyRouterExtension extends Extension
         );
 
         $loader->load('services.yaml');
+
+        // Дела с нативным битриксовым роутером - только для главного
+        // модуля версии 21.400.0 и старше.
+        if ($this->checkRequirements()) {
+            $loader->load('native_routes.yaml');
+        }
 
         // Если не задействован FacadeBundle, то удалить фасады.
         if (!class_exists(AbstractFacade::class)) {
@@ -166,6 +173,24 @@ class SymfonyRouterExtension extends Extension
                 'setConfigCacheFactory',
                 [new Reference('config_cache_factory')]
             );
+
+            if ($this->checkRequirements()) {
+                $nativrRouterDefinition = $container->getDefinition('bitrix_native_routes.router');
+                $nativrRouterDefinition->addMethodCall(
+                    'setConfigCacheFactory',
+                    [new Reference('config_cache_factory')]
+                );
+            }
         }
+    }
+
+    /**
+     * Проверка на нужную версию главного модуля.
+     *
+     * @return boolean
+     */
+    private function checkRequirements(): bool
+    {
+        return CheckVersion(ModuleManager::getVersion('main'), '21.400.0');
     }
 }

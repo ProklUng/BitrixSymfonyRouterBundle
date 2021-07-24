@@ -1,0 +1,23 @@
+services:
+  # конфигурация по умолчанию в *этом* файле
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  bitrix_native_routes.router:
+    class: Symfony\Component\Routing\Router
+    arguments:
+      - '@routing.loader'
+      - '%kernel.project_dir%/local/configs/bitrix_routes.yaml'
+      - cache_dir: '%router.cache.path%'
+        debug: '%kernel.debug%'
+        generator_class: Symfony\Component\Routing\Generator\CompiledUrlGenerator
+        generator_dumper_class: Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper
+        matcher_class: Symfony\Bundle\FrameworkBundle\Routing\RedirectableCompiledUrlMatcher
+        matcher_dumper_class: Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper
+      - '@request.context'
+
+  bitrix_native_routes.routes.collection:
+    class: Symfony\Component\Routing\RouteCollection
+    factory: ['@bitrix_native_routes.router', 'getRouteCollection']
