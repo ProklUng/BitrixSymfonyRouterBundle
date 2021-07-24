@@ -1,0 +1,10 @@
+first_bitrix_route:
+  path: /foo/{param}/
+  controller: 'Prokl\BitrixSymfonyRouterBundle\Tests\Fixture::cacheAction'
+  methods: GET|POST
+  requirements:
+    param: '\d+'
+  defaults:
+    param: 'Russia'
+
+

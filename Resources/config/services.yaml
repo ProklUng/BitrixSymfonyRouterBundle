@@ -80,7 +80,7 @@ services:
     arguments:
       - '@routing.loader'
       - '%kernel.project_dir%/%router.config.file%'
-      -   cache_dir: '%kernel.cache_dir%'
+      -   cache_dir: '%router.cache.path%'
           debug: '%kernel.debug%'
           generator_class: Symfony\Component\Routing\Generator\CompiledUrlGenerator
           generator_dumper_class: Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper
