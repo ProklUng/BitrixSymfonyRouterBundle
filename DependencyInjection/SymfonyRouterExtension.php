@@ -111,7 +111,6 @@ class SymfonyRouterExtension extends Extension
         $container->setParameter('router.request.context.scheme', $config['router_request_context_scheme']);
         $container->setParameter('router.request.context.base_url', $config['router_request_context_base_url']);
         $container->setParameter('router.cache.path', $config['router_cache_path']);
-        $container->setParameter('router.caching.routes', $config['router_caching_routes']);
         $container->setParameter('router.config.file', $config['router_config_file']);
         $container->setParameter('controller.annotations.path', $config['controller_annotations_path']);
         $container->setParameter('default_uri', $config['default_uri']);
@@ -161,7 +160,7 @@ class SymfonyRouterExtension extends Extension
         }
 
         // Применить кэширование роутов, если это задано опцией.
-        if ($config['router_caching_routes']) {
+        if ($config['router_cache_path']) {
             $routerDefinition = $container->getDefinition('router');
             $routerDefinition->addMethodCall(
                 'setConfigCacheFactory',
