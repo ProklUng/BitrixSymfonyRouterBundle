@@ -82,12 +82,32 @@ services:
       - '%kernel.project_dir%/%router.config.file%'
       -   cache_dir: '%kernel.cache_dir%'
           debug: '%kernel.debug%'
+          generator_class: Symfony\Component\Routing\Generator\CompiledUrlGenerator
+          generator_dumper_class: Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper
+          matcher_class: Symfony\Bundle\FrameworkBundle\Routing\RedirectableCompiledUrlMatcher
+          matcher_dumper_class: Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper
       - '@request.context'
 
   Symfony\Component\Routing\RouterInterface: '@router'
   Symfony\Component\Routing\RequestContextAwareInterface: '@router'
   Symfony\Component\Routing\Generator\UrlGeneratorInterface: '@router'
   Symfony\Component\Routing\Matcher\UrlMatcherInterface: '@router'
+
+  config.resource.self_checking_resource_checker:
+    class: Symfony\Component\Config\Resource\SelfCheckingResourceChecker
+    tags:
+      - { name: config_cache.resource_checker, priority: -990 }
+
+  dependency_injection.config.container_parameters_resource_checker:
+    class: Symfony\Component\DependencyInjection\Config\ContainerParametersResourceChecker
+    arguments: ['@service_container']
+    tags:
+      - { name: config_cache.resource_checker, priority: -980 }
+
+  config_cache_factory:
+    class: Symfony\Component\Config\ResourceCheckerConfigCacheFactory
+    arguments:
+      - !tagged_iterator config_cache.resource_checker
 
   # Диспетчер запуска контроллеров.
   dispatcher.controller:
@@ -171,4 +191,3 @@ services:
       - '@routing.resolver'
       - []
       - []
-
