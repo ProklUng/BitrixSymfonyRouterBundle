@@ -16,9 +16,9 @@ use Symfony\Component\HttpKernel\EventListener\ErrorListener;
 use Symfony\Component\HttpKernel\EventListener\ResponseListener;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
 use Symfony\Component\HttpKernel\HttpKernel;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class InitRouter
@@ -31,6 +31,7 @@ use Symfony\Component\Routing\RouteCollection;
  * @since 30.10.2020 ArgumentResolver пробрасывается снаружи.
  * @since 19.11.2020 RequestStack пробрасывается снаружи.
  * @since 06.03.2021 Инициация события kernel.terminate.
+ * @since 24.07.2021 Поддержка кэширования роутов.
  */
 class InitRouter
 {
@@ -38,6 +39,11 @@ class InitRouter
      * @var RouteCollection[] $bundlesRoutes Роуты бандлов.
      */
     private static $bundlesRoutes = [];
+
+    /**
+     * @var RouterInterface $router Router.
+     */
+    private $router;
 
     /**
      * @var RouteCollection $routeCollection Коллекция роутов.
@@ -82,7 +88,7 @@ class InitRouter
     /**
      * InitRouter constructor.
      *
-     * @param RouteCollection             $routeCollection    Коллекция роутов.
+     * @param RouterInterface             $router             Роутер.
      * @param ErrorControllerInterface    $errorController    Error controller.
      * @param EventDispatcher             $dispatcher         Event dispatcher.
      * @param ControllerResolverInterface $controllerResolver Controller resolver.
@@ -94,7 +100,7 @@ class InitRouter
      * @since 19.11.2020 RequestStack пробрасывается снаружи.
      */
     public function __construct(
-        RouteCollection $routeCollection,
+        RouterInterface $router,
         ErrorControllerInterface $errorController,
         EventDispatcher $dispatcher,
         ControllerResolverInterface $controllerResolver,
@@ -107,7 +113,10 @@ class InitRouter
         $this->dispatcher = $dispatcher;
         $this->controllerResolver = $controllerResolver;
         $this->argumentResolver = $argumentResolver;
-        $this->routeCollection = $routeCollection;
+
+        $this->router = $router;
+        $this->routeCollection = $router->getRouteCollection();
+
         $this->requestStack = $requestStack;
         $this->requestStack->push($this->request);
 
@@ -118,7 +127,9 @@ class InitRouter
         // Роуты бандлов.
         $this->mixRoutesBundles();
 
-        $matcher = new UrlMatcher($this->routeCollection, $requestContext);
+        $matcher = $this->router->getMatcher();
+        $matcher->setContext($requestContext);
+
         // Подписчики на события по умолчанию.
         $this->defaultSubscribers = [
             new RouterListener($matcher, $this->requestStack),

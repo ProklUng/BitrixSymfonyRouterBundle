@@ -164,7 +164,8 @@ class SymfonyRouterExtension extends Extension
         if ($config['router_caching_routes']) {
             $routerDefinition = $container->getDefinition('router');
             $routerDefinition->addMethodCall(
-                'setConfigCacheFactory', [new Reference('config_cache_factory')]
+                'setConfigCacheFactory',
+                [new Reference('config_cache_factory')]
             );
         }
     }

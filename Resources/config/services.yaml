@@ -37,7 +37,7 @@ services:
   init.router:
     class: Prokl\BitrixSymfonyRouterBundle\Services\Router\InitRouter
     arguments:
-      - '@routes.collection'
+      - '@router'
       - '@routing.json.error.controller'
       - '@event_dispatcher'
       - '@controller_resolver'
