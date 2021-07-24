@@ -95,7 +95,9 @@ class SymfonyRouterExtension extends Extension
         }
 
         if ($config['default_uri'] === null) {
+            /** @psalm-suppress PossiblyInvalidCast */
             $host = (string)$container->getParameter('kernel.http.host');
+            /** @psalm-suppress PossiblyInvalidCast */
             $schema = (string)$container->getParameter('kernel.schema');
             $config['default_uri'] = $schema . '://' . $host . '/';
         }

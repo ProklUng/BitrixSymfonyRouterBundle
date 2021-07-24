@@ -42,8 +42,8 @@ class RouteCheckerExist
             if (is_string($controller)) {
                 if (strpos($controller, '::') !== false) {
                     $callback = explode('::', $controller, 2);
-                    $class = (string)$callback[0];
-                    $method = (string)$callback[1];
+                    $class = $callback[0];
+                    $method = $callback[1];
                 } else {
                     // __invoke
                     $class = $controller;

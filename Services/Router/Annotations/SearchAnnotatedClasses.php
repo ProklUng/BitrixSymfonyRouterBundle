@@ -15,7 +15,7 @@ use RegexIterator;
 class SearchAnnotatedClasses
 {
     /**
-     * @var array $paths Пути, где искать классы.
+     * @var array|null $paths Пути, где искать классы.
      */
     private $paths;
 
@@ -37,7 +37,7 @@ class SearchAnnotatedClasses
      */
     public function __construct(
         string $documentRoot,
-        array $paths = null
+        ?array $paths = null
     ) {
         $this->paths = $paths;
         $this->documentRoot = $documentRoot;
@@ -50,7 +50,7 @@ class SearchAnnotatedClasses
      */
     public function collect() : array
     {
-        if (count($this->paths) === 0) {
+        if ($this->paths === null || count($this->paths) === 0) {
             return [];
         }
 

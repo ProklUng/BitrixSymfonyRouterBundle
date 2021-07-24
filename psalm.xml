@@ -55,6 +55,11 @@
                 <directory name="/"/>
             </errorLevel>
         </UndefinedClass>
+        <UndefinedFunction>
+            <errorLevel type="suppress">
+                <directory name="/"/>
+            </errorLevel>
+        </UndefinedFunction>
         <PropertyNotSetInConstructor>
             <errorLevel type="suppress">
                 <directory name="/"/>

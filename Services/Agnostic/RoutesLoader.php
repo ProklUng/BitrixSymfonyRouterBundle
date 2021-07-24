@@ -43,7 +43,7 @@ class RoutesLoader
     private $checker;
 
     /**
-     * @var ResourceCheckerConfigCache $cacheFreshChecker
+     * @var ResourceCheckerConfigCache | null $cacheFreshChecker
      */
     private $cacheFreshChecker;
 
@@ -98,7 +98,7 @@ class RoutesLoader
 
         if ($cacheDir) {
             $this->cacheFreshChecker = new ResourceCheckerConfigCache(
-                $this->cacheDir . '/url_generating_routes.php',
+                (string)$this->cacheDir . '/url_generating_routes.php',
                 [$this->checker]
             );
 
@@ -139,6 +139,10 @@ class RoutesLoader
      */
     public function purgeCache() : void
     {
+        if (!$this->cacheDir) {
+            return;
+        }
+
         $filesystem = new Filesystem();
 
         if (!$filesystem->exists($this->cacheDir)) {
@@ -155,9 +159,14 @@ class RoutesLoader
      */
     private function warmUpCache() : void
     {
+        if (!$this->cacheDir) {
+            return;
+        }
+
+        /** @psalm-suppress UndefinedInterfaceMethod */
         $this->router->setConfigCacheFactory($this->cacheFactory);
 
-        if (!$this->cacheFreshChecker->isFresh()) {
+        if ($this->cacheFreshChecker !== null && !$this->cacheFreshChecker->isFresh()) {
             if (!@file_exists($this->cacheDir)) {
                 @mkdir($this->cacheDir, 0777);
             }

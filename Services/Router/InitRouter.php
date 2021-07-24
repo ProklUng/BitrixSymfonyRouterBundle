@@ -127,6 +127,7 @@ class InitRouter
         // Роуты бандлов.
         $this->mixRoutesBundles();
 
+        /** @psalm-suppress UndefinedInterfaceMethod */
         $matcher = $this->router->getMatcher();
         $matcher->setContext($requestContext);
 

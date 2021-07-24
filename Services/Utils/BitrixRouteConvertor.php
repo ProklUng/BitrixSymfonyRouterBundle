@@ -132,13 +132,13 @@ class BitrixRouteConvertor
      * @param string       $name       Название роута.
      * @param array|string $controller Контроллер.
      *
-     * @return array
+     * @return string[]
      * @throws LogicException
      */
     private function parseControllerString(string $name, $controller) : array
     {
         $argument = $controller;
-        if (is_string($controller) && $controller) {
+        if (is_string($controller) && $controller !== '') {
             if (strpos($controller, '::') !== false) {
                 $controller = explode('::', $controller, 2);
                 if (strpos($controller[1], 'Action') === false) {
@@ -160,6 +160,22 @@ class BitrixRouteConvertor
                     sprintf('Route %s. Invokable controller %s not supporting.', $name, $controller)
                 );
             }
+        }
+
+        if (is_array($controller)) {
+            if (strpos($controller[1], 'Action') === false) {
+                // В методе контроллера обязательно должно содержаться Action
+                // (особенность битриксовых контроллеров)
+                throw new LogicException(
+                    sprintf(
+                        'Route %s. Action %s name of controller must contain Action.',
+                        $name,
+                        (string)$controller[0]
+                    )
+                );
+            }
+
+            return $controller;
         }
 
         throw new LogicException(
