@@ -59,9 +59,6 @@ $routeConvertor->setContainer($container);
 return function (RoutingConfigurator $routes) use ($container, $routeConvertor, $routeCollection) {
 
     $routeConvertor->convertRoutes($routes);
-
-    $routes->get('/', new PublicPageController('/index.php'));
-
 };
 ```
 
@@ -96,13 +93,22 @@ return function (RoutingConfigurator $routes) use ($container, $routeConvertor, 
 
 ```yaml
 first_bitrix_route:
-  path: /countries/{country}/
-  controller: 'Local\ExampleBitrixActionController::cacheAction'
+  path: /foo/{param}/
+  controller: 'Prokl\BitrixSymfonyRouterBundle\Tests\Fixture::cacheAction'
   methods: GET|POST
   requirements:
-    country: '\d+'
+    param: '\d+'
   defaults:
-    country: 'Russia'
+    param: 'Russia'
+
+# Старые статические страницы
+# / => /index.php
+public_page:
+  path: /
+  controller: ''
+  defaults:
+    _public: true # Ключевой признак
+
 ```
 
 Если установлен Битрикс с версией модуля младше `21.400.0`, то соответствующие сервисы будут

@@ -3,6 +3,7 @@
 namespace Prokl\BitrixSymfonyRouterBundle\Services\Utils;
 
 use Bitrix\Main\Engine\Controller;
+use Bitrix\Main\Routing\Controllers\PublicPageController;
 use Bitrix\Main\Routing\RoutingConfigurator;
 use LogicException;
 use RuntimeException;
@@ -75,6 +76,13 @@ class BitrixRouteConvertor
         }
 
         $path = $route->getPath();
+
+        // Старые статические страницы
+        if ($route->getDefault('_public') === true) {
+            $routes->get($path, new PublicPageController($path . 'index.php'));
+            return;
+        }
+
         $controller = $this->parseControllerString($name, $route->getDefault('_controller'));
 
         if (!is_subclass_of($controller[0], Controller::class)) {
@@ -104,7 +112,7 @@ class BitrixRouteConvertor
         $processedRoute = $routes->any($path, [$service, $controller[1]]);
 
         $processedRoute = $processedRoute->methods($methods)
-                                          ->name($name);
+            ->name($name);
 
         foreach ($route->getRequirements() as $reqParam => $reqValue) {
             $processedRoute = $processedRoute->where($reqParam, $reqValue);
@@ -130,7 +138,7 @@ class BitrixRouteConvertor
     private function parseControllerString(string $name, $controller) : array
     {
         $argument = $controller;
-        if (is_string($controller)) {
+        if (is_string($controller) && $controller) {
             if (strpos($controller, '::') !== false) {
                 $controller = explode('::', $controller, 2);
                 if (strpos($controller[1], 'Action') === false) {

@@ -7,4 +7,10 @@ first_bitrix_route:
   defaults:
     param: 'Russia'
 
-
+# Старые статические страницы
+# / => /index.php
+public_page:
+  path: /
+  controller: ''
+  defaults:
+    _public: true # Ключевой признак
