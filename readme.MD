@@ -113,3 +113,28 @@ public_page:
 
 Если установлен Битрикс с версией модуля младше `21.400.0`, то соответствующие сервисы будут
 удалены из бандла на стадии компиляции.
+
+## Использование роутера без контейнера и вне фреймворка
+
+`init.php`:
+
+```php
+use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\RoutesLoader;
+use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\Router;
+use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\BitrixInitializerRouter;
+
+$agnosticRouter = new RoutesLoader(
+    $_SERVER['DOCUMENT_ROOT'] . '/local/configs/standalone_routes.yaml',
+    $_SERVER['DOCUMENT_ROOT'] . '/bitrix/cache/routes_agnostic', // Кэш; если null - без кэширования.
+    $_ENV['DEBUG'] // Режим отладки или нет
+);
+
+$agnosticRouterInstance = new Router(
+    $agnosticRouter->getRouter(),
+    new BitrixInitializerRouter()
+);
+```
+
+Все. Подтянутся роуты из `/local/configs/standalone_routes.yaml`. Автоматически подцепятся события.
+
+Допускается наличие нескольких таких "агностических" роутеров в один момент.

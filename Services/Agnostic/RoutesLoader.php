@@ -153,6 +153,14 @@ class RoutesLoader
     }
 
     /**
+     * @return RouterInterface
+     */
+    public function getRouter(): RouterInterface
+    {
+        return $this->router;
+    }
+
+    /**
      * Создать (если надо), кэш.
      *
      * @return void
