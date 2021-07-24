@@ -163,8 +163,8 @@ class SymfonyRouterExtension extends Extension
         // Применить кэширование роутов, если это задано опцией.
         if ($config['router_caching_routes']) {
             $routerDefinition = $container->getDefinition('router');
-            $routerDefinition->setMethodCalls(
-                ['setConfigCacheFactory', '@config_cache_factory']
+            $routerDefinition->addMethodCall(
+                'setConfigCacheFactory', [new Reference('config_cache_factory')]
             );
         }
     }
