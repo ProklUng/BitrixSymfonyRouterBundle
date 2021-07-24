@@ -6,7 +6,9 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\DelegatingLoader;
 use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Config\Resource\SelfCheckingResourceChecker;
+use Symfony\Component\Config\ResourceCheckerConfigCache;
 use Symfony\Component\Config\ResourceCheckerConfigCacheFactory;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Loader\PhpFileLoader;
 use Symfony\Component\Routing\Loader\XmlFileLoader;
@@ -31,6 +33,26 @@ class RoutesLoader
     private $router;
 
     /**
+     * @var ResourceCheckerConfigCacheFactory $cacheFactory
+     */
+    private $cacheFactory;
+
+    /**
+     * @var SelfCheckingResourceChecker $checker
+     */
+    private $checker;
+
+    /**
+     * @var ResourceCheckerConfigCache $cacheFreshChecker
+     */
+    private $cacheFreshChecker;
+
+    /**
+     * @var string|null $cacheDir Путь к кэшу. Null -> не кэшировать.
+     */
+    private $cacheDir;
+
+    /**
      * AgnosticRouteLoader constructor.
      *
      * @param string      $configFile Yaml/php/xml файл с конфигурацией роутов.
@@ -42,6 +64,8 @@ class RoutesLoader
         ?string $cacheDir = null,
         bool $debug = true
     ) {
+        $this->cacheDir = $cacheDir;
+
         $resolver = new LoaderResolver(
             [
                 new YamlFileLoader(new FileLocator()),
@@ -55,8 +79,8 @@ class RoutesLoader
         $requestContext = new RequestContext();
         $request = Request::createFromGlobals();
 
-        $checker = new SelfCheckingResourceChecker();
-        $cacheFactory = new ResourceCheckerConfigCacheFactory([$checker]);
+        $this->checker = new SelfCheckingResourceChecker();
+        $this->cacheFactory = new ResourceCheckerConfigCacheFactory([$this->checker]);
 
         $this->router = new Router(
             $delegatingLoader,
@@ -73,7 +97,12 @@ class RoutesLoader
         );
 
         if ($cacheDir) {
-            $this->router->setConfigCacheFactory($cacheFactory);
+            $this->cacheFreshChecker = new ResourceCheckerConfigCache(
+                $this->cacheDir . '/url_generating_routes.php',
+                [$this->checker]
+            );
+
+            $this->warmUpCache();
         }
     }
 
@@ -84,6 +113,61 @@ class RoutesLoader
      */
     public function getRoutes() : RouteCollection
     {
+        if ($this->cacheDir) {
+            $compiledRoutesFile = $this->cacheDir . '/route_collection.json';
+
+            if ($this->cacheFreshChecker !== null
+                &&
+                $this->cacheFreshChecker->isFresh()
+                &&
+                @file_exists($compiledRoutesFile)) {
+                $collection = file_get_contents($compiledRoutesFile);
+                if ($collection) {
+                    $collection = unserialize($collection);
+                    return $collection;
+                }
+            }
+        }
+
         return $this->router->getRouteCollection();
+    }
+
+    /**
+     * Удалить кэш.
+     *
+     * @return void
+     */
+    public function purgeCache() : void
+    {
+        $filesystem = new Filesystem();
+
+        if (!$filesystem->exists($this->cacheDir)) {
+            return;
+        }
+
+        $filesystem->remove($this->cacheDir);
+    }
+
+    /**
+     * Создать (если надо), кэш.
+     *
+     * @return void
+     */
+    private function warmUpCache() : void
+    {
+        $this->router->setConfigCacheFactory($this->cacheFactory);
+
+        if (!$this->cacheFreshChecker->isFresh()) {
+            if (!@file_exists($this->cacheDir)) {
+                @mkdir($this->cacheDir, 0777);
+            }
+
+            file_put_contents(
+                $this->cacheDir . '/route_collection.json',
+                serialize($this->router->getRouteCollection())
+            );
+        }
+
+        $this->router->getGenerator(); // Трюк по созданию кэша.
     }
 }
