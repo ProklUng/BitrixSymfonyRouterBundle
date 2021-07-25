@@ -105,6 +105,40 @@ class BitrixRouteConvertorTest extends BaseTestCase
     }
 
     /**
+     * parseControllerString(). Пустой массив.
+     *
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testParseControllerStringEmptyArray() : void
+    {
+        $this->expectException(LogicException::class);
+
+        PHPUnitUtils::callMethod(
+            $this->obTestObject,
+            'parseControllerString',
+            ['fooName', []]
+        );
+    }
+
+    /**
+     * parseControllerString(). Массив. Invokable.
+     *
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testParseControllerStringArrayInvokable() : void
+    {
+        $this->expectException(LogicException::class);
+
+        PHPUnitUtils::callMethod(
+            $this->obTestObject,
+            'parseControllerString',
+            ['fooName', ['Controller']]
+        );
+    }
+
+    /**
      * parseControllerString(). Массив.
      *
      * @return void

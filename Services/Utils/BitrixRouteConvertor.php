@@ -162,7 +162,14 @@ class BitrixRouteConvertor
             }
         }
 
-        if (is_array($controller)) {
+        if (is_array($controller) && count($controller) > 0) {
+            if (!array_key_exists(1, $controller)) {
+                // Invoke controller (не поддерживается).
+                throw new LogicException(
+                    sprintf('Route %s. Invokable controller %s not supporting.', $name, $controller[0])
+                );
+            }
+
             if (strpos($controller[1], 'Action') === false) {
                 // В методе контроллера обязательно должно содержаться Action
                 // (особенность битриксовых контроллеров)
