@@ -19,18 +19,18 @@ use Symfony\Component\Routing\Router;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Class RoutesLoader
+ * Class RoutesConfigurator
  * Независимый от контейнера загрузчик роутов.
  * @package Prokl\BitrixSymfonyRouterBundle\Services\Agnostic
  *
  * @since 24.07.2021
  */
-class RoutesLoader
+class RoutesConfigurator
 {
     /**
      * @var RouterInterface $router Роутер.
      */
-    private $router;
+    protected static$router;
 
     /**
      * @var ResourceCheckerConfigCacheFactory $cacheFactory
@@ -82,7 +82,7 @@ class RoutesLoader
         $this->checker = new SelfCheckingResourceChecker();
         $this->cacheFactory = new ResourceCheckerConfigCacheFactory([$this->checker]);
 
-        $this->router = new Router(
+        static::$router = new Router(
             $delegatingLoader,
             $configFile,
             [
@@ -129,7 +129,7 @@ class RoutesLoader
             }
         }
 
-        return $this->router->getRouteCollection();
+        return static::$router->getRouteCollection();
     }
 
     /**
@@ -153,11 +153,23 @@ class RoutesLoader
     }
 
     /**
+     * Экземпляр роутера.
+     *
+     * @return RouterInterface|null
+     */
+    public static function getInstance(): ?RouterInterface
+    {
+        return static::$router;
+    }
+
+    /**
+     * Экземпляр роутера.
+     *
      * @return RouterInterface
      */
     public function getRouter(): RouterInterface
     {
-        return $this->router;
+        return static::$router;
     }
 
     /**
@@ -172,7 +184,7 @@ class RoutesLoader
         }
 
         /** @psalm-suppress UndefinedInterfaceMethod */
-        $this->router->setConfigCacheFactory($this->cacheFactory);
+        static::$router->setConfigCacheFactory($this->cacheFactory);
 
         if ($this->cacheFreshChecker !== null && !$this->cacheFreshChecker->isFresh()) {
             if (!@file_exists($this->cacheDir)) {
@@ -181,10 +193,10 @@ class RoutesLoader
 
             file_put_contents(
                 $this->cacheDir . '/route_collection.json',
-                serialize($this->router->getRouteCollection())
+                serialize(static::$router->getRouteCollection())
             );
         }
 
-        $this->router->getGenerator(); // Трюк по созданию кэша.
+        static::$router->getGenerator(); // Трюк по созданию кэша.
     }
 }

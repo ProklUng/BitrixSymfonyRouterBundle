@@ -2,21 +2,21 @@
 
 namespace Prokl\BitrixSymfonyRouterBundle\Tests\Cases;
 
-use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\RoutesLoader;
+use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\RoutesConfigurator;
 use Prokl\TestingTools\Base\BaseTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class AgnosticRoutesLoaderTest
  * @package Prokl\BitrixSymfonyRouterBundle\Tests
- * @coversDefaultClass RoutesLoader
+ * @coversDefaultClass RoutesConfigurator
  *
  * @since 24.07.2021
  */
 class AgnosticRoutesLoaderTest extends BaseTestCase
 {
     /**
-     * @var RoutesLoader $obTestObject Тестируемый объект.
+     * @var RoutesConfigurator $obTestObject Тестируемый объект.
      */
     protected $obTestObject;
 
@@ -44,7 +44,7 @@ class AgnosticRoutesLoaderTest extends BaseTestCase
 
         $this->filesystem = new Filesystem();
 
-        $this->obTestObject = new RoutesLoader(
+        $this->obTestObject = new RoutesConfigurator(
             $this->routesConfig,
             null,
             true
@@ -85,7 +85,7 @@ class AgnosticRoutesLoaderTest extends BaseTestCase
      */
     public function testCaching() : void
     {
-        $this->obTestObject = new RoutesLoader(
+        $this->obTestObject = new RoutesConfigurator(
             $this->routesConfig,
             $this->cacheDir,
             true
@@ -103,7 +103,7 @@ class AgnosticRoutesLoaderTest extends BaseTestCase
      */
     public function testPurgeCache(): void
     {
-        $this->obTestObject = new RoutesLoader(
+        $this->obTestObject = new RoutesConfigurator(
             $this->routesConfig,
             $this->cacheDir,
             true

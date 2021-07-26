@@ -127,6 +127,14 @@ class BitrixRouteConvertor
     }
 
     /**
+     * @return RouteCollection
+     */
+    public function getRouteCollection(): RouteCollection
+    {
+        return $this->routeCollection;
+    }
+
+    /**
      * Парсинг строки _controller.
      *
      * @param string       $name       Название роута.
