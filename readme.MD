@@ -37,14 +37,14 @@
 ```php
 use Prokl\ServiceProvider\ServiceProvider;
 use Bitrix\Main\Routing\Controllers\PublicPageController;
-use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\RoutesConfigurator;
+use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\BaseRoutesConfigurator;
 use Prokl\BitrixSymfonyRouterBundle\Services\Utils\BitrixRouteConvertor;
 use Bitrix\Main\Routing\RoutingConfigurator;
 
 // Не обязательно. Смотри ниже.
 $container = ServiceProvider::instance();
 
-$agnosticRouter = new RoutesConfigurator(
+$agnosticRouter = new BaseRoutesConfigurator(
     $_SERVER['DOCUMENT_ROOT'] . '/local/configs/bitrix_routes.yaml', // Конфиг роутов
     $_SERVER['DOCUMENT_ROOT'] . '/bitrix/cache/routes', // Кэш; если null - без кэширования.
     $_ENV['DEBUG']
@@ -119,11 +119,11 @@ public_page:
 `init.php`:
 
 ```php
-use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\RoutesConfigurator;
+use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\BaseRoutesConfigurator;
 use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\Router;
 use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\BitrixInitializerRouter;
 
-$agnosticRouter = new RoutesConfigurator(
+$agnosticRouter = new BaseRoutesConfigurator(
     $_SERVER['DOCUMENT_ROOT'] . '/local/configs/standalone_routes.yaml',
     $_SERVER['DOCUMENT_ROOT'] . '/bitrix/cache/routes_agnostic', // Кэш; если null - без кэширования.
     $_ENV['DEBUG'] // Режим отладки или нет
@@ -141,8 +141,8 @@ $agnosticRouterInstance = new Router(
 
 ## Прочее
 
-1) Экземпляр `Symfony\Component\Routing\Router` можно получить снаружи так:
+1) Экземпляр `Symfony\Component\Routing\Router` (роуты Symfony) можно получить снаружи так:
 
 ```php
-$router = \Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\RoutesConfigurator::getInstance();
+$router = \Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\SymfonyRoutes::getInstance();
 ```

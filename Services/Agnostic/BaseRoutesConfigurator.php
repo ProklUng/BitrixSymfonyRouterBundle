@@ -19,13 +19,13 @@ use Symfony\Component\Routing\Router;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Class RoutesConfigurator
+ * Class BaseRoutesConfigurator
  * Независимый от контейнера загрузчик роутов.
  * @package Prokl\BitrixSymfonyRouterBundle\Services\Agnostic
  *
  * @since 24.07.2021
  */
-class RoutesConfigurator
+class BaseRoutesConfigurator
 {
     /**
      * @var RouterInterface $router Роутер.
