@@ -6,7 +6,6 @@ use CHTTP;
 use Exception;
 use Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorControllerInterface;
 use Prokl\BitrixSymfonyRouterBundle\Services\Listeners\StringResponseListener;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -90,7 +89,7 @@ class InitRouter
      *
      * @param RouterInterface             $router             Роутер.
      * @param ErrorControllerInterface    $errorController    Error controller.
-     * @param EventDispatcher             $dispatcher         Event dispatcher.
+     * @param EventDispatcherInterface    $dispatcher         Event dispatcher.
      * @param ControllerResolverInterface $controllerResolver Controller resolver.
      * @param ArgumentResolverInterface   $argumentResolver   Argument resolver.
      * @param RequestStack                $requestStack       Request stack.
@@ -102,7 +101,7 @@ class InitRouter
     public function __construct(
         RouterInterface $router,
         ErrorControllerInterface $errorController,
-        EventDispatcher $dispatcher,
+        EventDispatcherInterface $dispatcher,
         ControllerResolverInterface $controllerResolver,
         ArgumentResolverInterface $argumentResolver,
         RequestStack $requestStack,
