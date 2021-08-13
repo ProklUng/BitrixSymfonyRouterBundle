@@ -2,8 +2,8 @@
 
 namespace Prokl\BitrixSymfonyRouterBundle\Services\Agnostic;
 
+use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\Contracts\RouterInitializerInterface;
 use Prokl\BitrixSymfonyRouterBundle\Services\Router\InitRouter;
-use Prokl\WpSymfonyRouterBundle\Services\Agnostic\Contracts\RouterInitializerInterface;
 
 /**
  * Class BitrixInitializerRouter

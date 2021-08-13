@@ -2,9 +2,9 @@
 
 namespace Prokl\BitrixSymfonyRouterBundle\Services\Agnostic;
 
+use Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\Contracts\RouterInitializerInterface;
 use Prokl\BitrixSymfonyRouterBundle\Services\Controllers\ErrorJsonController;
 use Prokl\BitrixSymfonyRouterBundle\Services\Router\InitRouter;
-use Prokl\WpSymfonyRouterBundle\Services\Agnostic\Contracts\RouterInitializerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;

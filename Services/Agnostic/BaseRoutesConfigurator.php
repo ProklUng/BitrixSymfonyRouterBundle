@@ -30,7 +30,7 @@ class BaseRoutesConfigurator
     /**
      * @var RouterInterface $router Роутер.
      */
-    protected static$router;
+    protected static $router;
 
     /**
      * @var ResourceCheckerConfigCacheFactory $cacheFactory

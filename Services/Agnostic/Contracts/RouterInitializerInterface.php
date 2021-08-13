@@ -1,11 +1,11 @@
 <?php
 
-namespace Prokl\WpSymfonyRouterBundle\Services\Agnostic\Contracts;
+namespace Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\Contracts;
 
 use Prokl\BitrixSymfonyRouterBundle\Services\Router\InitRouter;
 
 /**
- * Interface Prokl\WpSymfonyRouterBundle\Services\Agnostic\Contracts
+ * Interface Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\Contracts
  * @package Local\Bitrix
  *
  * @since 24.07.2021
