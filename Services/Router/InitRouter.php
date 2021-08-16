@@ -189,6 +189,11 @@ class InitRouter
         // Send the response to the browser and exit app.
         $response->send();
 
+        $events = GetModuleEvents('main', 'OnAfterEpilog', true);
+        foreach($events as $event) {
+            ExecuteModuleEventEx($event);
+        }
+
         exit;
     }
 
