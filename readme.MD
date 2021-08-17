@@ -146,3 +146,44 @@ $agnosticRouterInstance = new Router(
 ```php
 $router = \Prokl\BitrixSymfonyRouterBundle\Services\Agnostic\SymfonyRoutes::getInstance();
 ```
+
+2) Как загрузить роуты бандлы:
+
+В файле `Extension` бандла:
+
+```php
+    public function load(array $configs, ContainerBuilder $container) : void
+    {
+        // ....
+         $this->loadRoutes(__DIR__ . '/../Resources/config', 'routes.yaml');
+    }
+
+    /**
+     * Загрузить роуты в бандле.
+     *
+     * @param string $path   Путь к конфигу.
+     * @param string $config Конфигурационный файл.
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException Нет класса-конфигуратора роутов.
+     */
+    private function loadRoutes(string $path, string $config = 'routes.yaml') : void
+    {
+        $routeLoader = new \Symfony\Component\Routing\Loader\YamlFileLoader(
+            new FileLocator($path)
+        );
+
+        $routes = $routeLoader->load($config);
+
+        if (class_exists(InitRouter::class)) {
+            InitRouter::addRoutesBundle($routes);
+            return;
+        }
+
+        throw new InvalidArgumentException('Class InitRouter not exist.');
+    }
+```
+
+Или воспользоваться трэйтом `Prokl\BitrixSymfonyRouterBundle\Services\Utils\LoaderBundleRoutesTrait`,
+куда вынесен этот метод.
