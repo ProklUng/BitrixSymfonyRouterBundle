@@ -184,7 +184,7 @@ class InitRouter
         }
 
         // Для внутренних нужд пометить роут Symfony
-        $this->request->headers->add(['X-Symfony-route', 1]);
+        $this->request->headers->set('X-Symfony-route', 1);
 
         // Перебиваю битриксовый 404 для роутов.
         CHTTP::SetStatus('200 OK');
