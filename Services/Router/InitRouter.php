@@ -179,7 +179,7 @@ class InitRouter
 
         // Handle if no route match found
         if ($response->getStatusCode() === 404) {
-            // If no route found do noting and let continue.
+            // If no route found do nothing and let continue.
             return;
         }
 
